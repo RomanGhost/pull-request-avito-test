@@ -4,9 +4,8 @@ import (
 	"log"
 	"os"
 
-	"pr-app/internal/db"
-	"pr-app/internal/router"
-
+	"github.com/RomanGhost/pull-request-avito-test/internal/database"
+	"github.com/RomanGhost/pull-request-avito-test/internal/handler"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,10 +15,12 @@ func main() {
 		dsn = "postgres://pruser:prpassword@db:5432/prdb?sslmode=disable"
 	}
 
-	database := db.InitDB(dsn)
+	database := database.InitDB(dsn)
 
 	r := gin.Default()
-	router.SetupRoutes(r, database)
+
+	h := handler.RegisterHandlers(database)
+	h.RegisterRoutes(r)
 
 	log.Println("Server running on :8080")
 	if err := r.Run(":8080"); err != nil {
